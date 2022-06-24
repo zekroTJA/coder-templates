@@ -105,4 +105,8 @@ resource "docker_container" "workspace" {
     volume_name    = docker_volume.home_volume.name
     read_only      = false
   }
+  volumes {
+    container_path = "/var/run/docker.sock"
+    host_path      = "/var/run/docker.sock"
+  }
 }
