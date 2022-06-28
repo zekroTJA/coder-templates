@@ -12,7 +12,7 @@ terraform {
   }
 }
 
-# Admin parameters
+# ->> Admin parameters -----------------------------------------------------------------------------
 
 variable "step2_arch" {
   description = <<-EOF
@@ -39,6 +39,32 @@ variable "step3_OS" {
   sensitive = true
 }
 
+# <<- Admin parameters -----------------------------------------------------------------------------
+
+# ->> Startup parameters ---------------------------------------------------------------------------
+
+variable "workspace_base_image" {
+  description = "Which Docker base image would you like to use for your workspace?"
+  default = "codercom/enterprise-base:ubuntu"
+  validation {
+    condition     = contains(
+      ["codercom/enterprise-base:ubuntu", "codercom/code-server:latest"], 
+      var.workspace_base_image)
+    error_message = "Invalid Docker image!"
+  }
+}
+
+variable "dotfiles_uri" {
+  description = <<-EOF
+  Dotfiles repo URI (optional)
+  (see https://dotfiles.github.io)
+  EOF
+  default     = ""
+}
+
+
+# <<- Startup parameters ---------------------------------------------------------------------------
+
 provider "docker" {
   host = var.step3_OS == "Windows" ? "npipe:////.//pipe//docker_engine" : "unix:///var/run/docker.sock"
 }
@@ -49,19 +75,13 @@ provider "coder" {
 data "coder_workspace" "me" {
 }
 
-variable "workspace_base_image" {
-  description = "Which Docker base image would you like to use for your workspace?"
-  default = "codercom/enterprise-base:ubuntu"
-  validation {
-    condition     = contains(["codercom/enterprise-base:ubuntu", "codercom/code-server:latest"], var.workspace_base_image)
-    error_message = "Invalid Docker image!"
-  }
-}
-
 resource "coder_agent" "dev" {
   arch = var.step2_arch
   os   = lower(var.step3_OS)
-  startup_script = var.workspace_base_image == "codercom/code-server:latest" ? "code-server --auth none" : ""
+  startup_script = <<-EOF
+  ${var.dotfiles_uri != "" ? "coder dotfiles -y ${var.dotfiles_uri}" : ""}
+  ${var.workspace_base_image == "codercom/code-server:latest" ? "code-server --auth none" : ""}
+  EOF
 }
 
 resource "coder_app" "code-server" {

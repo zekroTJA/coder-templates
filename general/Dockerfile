@@ -26,4 +26,4 @@ RUN corepack enable \
     && npm i -g corepack
 
 USER coder
-RUN echo "export PATH=$PATH:$GOROOT/bin" >> ~/.profile
+RUN echo 'export PATH=$PATH:$GOROOT/bin' >> ~/.profile
