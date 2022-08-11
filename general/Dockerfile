@@ -25,5 +25,16 @@ RUN env GOBIN=/bin go install github.com/go-task/task/v3/cmd/task@latest
 RUN corepack enable \
     && npm i -g corepack
 
+# Install Elixir
+RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+    && dpkg -i erlang-solutions_2.0_all.deb \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y esl-erlang elixir
+
 USER coder
+
+# Install Rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y \
+    && source "$HOME/.cargo/env"
+
 RUN echo 'export PATH=$PATH:$GOROOT/bin' >> ~/.profile
