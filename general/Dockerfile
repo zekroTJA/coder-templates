@@ -34,6 +34,13 @@ RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
 # Install hugo
 RUN apt-get install hugo
 
+# Install dotnet
+RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb \
+    && rm packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y dotnet-sdk-6.0
+
 USER coder
 
 # Install Rust
