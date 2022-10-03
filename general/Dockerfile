@@ -5,6 +5,7 @@ FROM ${BASE_IMAGE}
 USER root
 
 RUN apt update -y && apt upgrade -y
+RUN apt install -y wget
 
 # Install Go
 RUN curl -L https://gist.githubusercontent.com/zekroTJA/87d560e04c68703efe384bd273c3901c/raw/836cf9b4b1f52cfd83ed222daa09412c1bcf4d6a/golang-download-latest.sh | bash -
@@ -30,9 +31,9 @@ RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
     && dpkg -i erlang-solutions_2.0_all.deb \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y esl-erlang elixir
-    
+
 # Install hugo
-RUN apt-get install hugo
+RUN apt-get install -y hugo
 
 # Install dotnet
 RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
@@ -45,6 +46,6 @@ USER coder
 
 # Install Rust
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y \
-    && source "$HOME/.cargo/env"
+    && source "$HOME/.cargo/env" || true
 
 RUN echo 'export PATH=$PATH:$GOROOT/bin' >> ~/.profile
