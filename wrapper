@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function print_usage {
+  echo "Uage: $(basename $0) {create,push} name [dir]"
+  echo "See 'coder templates -h' for further information."
+  exit 1
+}
+
+which coder > /dev/null || {
+  echo "Command 'coder' is not accessible."
+  exit 1
+}
+
+cmd=$1
+shift
+
+[ "$cmd" != "create" ] && [ "$cmd" != "push" ] && print_usage
+
+name=$1
+shift
+
+dir=$1
+[ -z $dir ] && dir=$name
+
+[ -z $name ] && print_usage
+
+rm -rf .tmp || true
+cp -R templates/$dir .tmp
+cp -R modules .tmp/
+
+coder templates $cmd $name -d .tmp
+
+rm -rf .tmp

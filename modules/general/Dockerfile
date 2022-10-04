@@ -42,6 +42,9 @@ RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod
     && apt-get update \
     && apt-get install -y dotnet-sdk-6.0
 
+# Install MySQL client
+RUN apt-get install -y mysql-client
+
 USER coder
 
 # Install Rust

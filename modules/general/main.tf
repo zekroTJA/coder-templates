@@ -12,64 +12,17 @@ terraform {
   }
 }
 
-# ->> Admin parameters -----------------------------------------------------------------------------
-
-variable "step2_arch" {
-  description = <<-EOF
-  arch: What architecture is your Docker host on?
-  note: codercom/enterprise-* images are only built for amd64
-  EOF
-
-  validation {
-    condition     = contains(["amd64", "arm64", "armv7"], var.step2_arch)
-    error_message = "Value must be amd64, arm64, or armv7."
-  }
-  sensitive = true
+variable "step2_arch" {}
+variable "step3_OS" {}
+variable "workspace_base_image" {}
+variable "dotfiles_uri" {}
+variable "docker_network" {
+  type = string
+  default = ""
 }
-
-variable "step3_OS" {
-  description = <<-EOF
-  What operating system is your Coder host on?
-  EOF
-
-  validation {
-    condition     = contains(["MacOS", "Windows", "Linux"], var.step3_OS)
-    error_message = "Value must be MacOS, Windows, or Linux."
-  }
-  sensitive = true
-}
-
-# <<- Admin parameters -----------------------------------------------------------------------------
-
-# ->> Startup parameters ---------------------------------------------------------------------------
-
-variable "workspace_base_image" {
-  description = "Which Docker base image would you like to use for your workspace?"
-  default = "codercom/enterprise-base:ubuntu"
-  validation {
-    condition     = contains(
-      ["codercom/enterprise-base:ubuntu", "codercom/code-server:latest"], 
-      var.workspace_base_image)
-    error_message = "Invalid Docker image!"
-  }
-}
-
-variable "dotfiles_uri" {
-  description = <<-EOF
-  Dotfiles repo URI (optional)
-  (see https://dotfiles.github.io)
-  EOF
-  default     = ""
-}
-
-
-# <<- Startup parameters ---------------------------------------------------------------------------
 
 provider "docker" {
   host = var.step3_OS == "Windows" ? "npipe:////.//pipe//docker_engine" : "unix:///var/run/docker.sock"
-}
-
-provider "coder" {
 }
 
 data "coder_workspace" "me" {
@@ -97,7 +50,7 @@ resource "docker_image" "workspace_image" {
   name = "coder-base-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   build {
     path       = "."
-    dockerfile = "Dockerfile"
+    dockerfile = "./modules/general/Dockerfile"
     tag        = ["coder-base-general-workspace-image:latest"]
     build_arg = {
       BASE_IMAGE: var.workspace_base_image
@@ -128,5 +81,11 @@ resource "docker_container" "workspace" {
   volumes {
     container_path = "/var/run/docker.sock"
     host_path      = "/var/run/docker.sock"
+  }
+  dynamic "networks_advanced" {
+    for_each = var.docker_network == "" ? [] : [1]
+    content {
+      name = var.docker_network
+    }
   }
 }
