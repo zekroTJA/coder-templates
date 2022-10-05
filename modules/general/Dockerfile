@@ -45,6 +45,9 @@ RUN wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod
 # Install MySQL client
 RUN apt-get install -y mysql-client
 
+# Install redis-server and redis-cli
+RUN apt-get install -y redis-server 
+
 USER coder
 
 # Install Rust
