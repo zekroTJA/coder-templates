@@ -24,7 +24,7 @@ variable "database" {
   default = "root"
 }
 variable "pgadmin_email" {
-  default = "root@root"
+  default = "root@root.com"
 }
 variable "pgadmin_password" {
   default = "root"

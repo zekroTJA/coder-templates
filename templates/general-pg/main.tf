@@ -78,7 +78,7 @@ variable "pg_database" {
 
 variable "pgadmin_email" {
   description = "The login email for PgAdmin."
-  default = "root@root"
+  default = "root@root.com"
 }
 
 variable "pgadmin_password" {

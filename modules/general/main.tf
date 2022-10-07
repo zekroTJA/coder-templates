@@ -51,7 +51,7 @@ resource "docker_image" "workspace_image" {
   build {
     path       = "."
     dockerfile = "./modules/general/Dockerfile"
-    tag        = ["coder-base-general-workspace-image:latest"]
+    tag        = ["coder-base-general-workspace-image"]
     build_arg = {
       BASE_IMAGE: var.workspace_base_image
     }
