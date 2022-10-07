@@ -23,6 +23,21 @@ The following templates are included.
     - MariaDB Server
     - PHPMyAdmin
 
+- **`general-pg`**  
+  Includes all toolchains and apps as the `general` template. Also includes the following services:
+    - PostgreSQL Server
+    - pgAdmin 4
+
+- **`general-redis`**  
+  Includes all toolchains and apps as the `general` template. Also includes the following services:
+    - Redis Server
+
+- **`general-pg-redis`**  
+  Includes all toolchains and apps as the `general` template. Also includes the following services:
+    - PostgreSQL Server
+    - Redis Server
+    - pgAdmin 4
+
 ## Usage
 
 First of all, clone this repository.
