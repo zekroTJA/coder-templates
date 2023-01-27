@@ -22,6 +22,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 # Install Taskfile
 RUN env GOBIN=/bin go install github.com/go-task/task/v3/cmd/task@latest
 
+# Install staticcheck
+RUN env GOBIN=/bin go install honnef.co/go/tools/cmd/staticcheck@latest
+
 # Install Corepack / Yarn
 RUN corepack enable \
     && npm i -g corepack
